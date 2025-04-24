@@ -36,25 +36,25 @@ pipeline{
 
         stage('Performance Report') {
             steps {
-                perfReport{
+                perfReport(
                     sourceDataFiles: "${env.JTL_REPORT_FILE}",
                     errorFailedThreshold: 1,
                     errorUnstableThreshold: 0.5
-                }
+                )
             }
 
         }
 
         stage('HTML Report') {
             steps {
-                publishHTML{
+                publishHTML(
                     allowMissing: false,
                     alwaysLinkToLastBuild: false,
                     keepAll: false,
                     reportDir : "${env.HTML_REPORT_DIR}",
                     reportFiles: 'index.html',
                     reportName: 'JMeter Performance Report'
-                }
+                )
             }
         }
     }
