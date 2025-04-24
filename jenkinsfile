@@ -1,0 +1,68 @@
+pipeline{
+    agent any
+
+    environment {
+        JMETER_VERSION = "5.6.3"
+        JMETER_HOME = "/opt/jmeter/apache-jmeter-${JMETER_VERSION}"
+
+        JTL_REPORT_FILE = "results/results.jtl"  //jtl 생성위치
+        HTML_REPORT_DIR = "results/report_output" //레포트 생성위치
+    }
+
+    stages{
+
+        stage('RUN Tests') { //단계
+            steps { //실행내용
+                script { //sh => 리눅스 명령어로 실행할거야 라는 뜻
+                    sh 'rm -rf results' //results 폴더 및 파일을 전부 삭제
+                    sh 'rm -f results.jtl' //jtl 파일만 타겟팅해서 삭제
+                    sh 'rm -rf report_output' //report_output 폴더 전체 삭제
+
+                    sh 'mkdir -p results' //results 폴더 생성
+                    sh 'mkdir -p report_output' //report_output 폴더 생성
+                    sh 'mkdir -p results/report_output'
+
+
+                    sh """
+                    echo "시작
+                    ${env.JMETER_HOME}/bin/jmeter -n \\
+                    -t testplan0424.jmx \\
+                    -l ./results/results.jtl \\ //.${env.JTL_REPORT_FILE}
+                    -e -o ./results/report_output   //.${env.HTML_REPORT_DIR}
+                    """
+                }
+            }
+        }
+
+        stage('Performance Report') {
+            steps {
+                perfReport{
+                    sources: "${env.JTL_REPORT_FILE}",
+                    errorFailedThreshold: 1,
+                    errorUnstableThreshold: 0.5
+                }
+            }
+
+        }
+
+        stage('HTML Report') {
+            steps {
+                publishHTML{
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: false,
+                    reportDir : "${env.HTML_REPORT_DIR}",
+                    reportFiles: 'index.html',
+                    reportName: 'JMeter Performance Report'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Build finished.'
+            archiveArtifacts artifacts: "${env.HTML_REPORT_DIR}/**/*", allowEmptyArchive: true
+        }
+    }
+}
