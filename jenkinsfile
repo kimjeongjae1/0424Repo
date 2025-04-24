@@ -24,12 +24,14 @@ pipeline{
 
 
                     sh """
-                    echo "시작
+                    echo "시작"
                     ${env.JMETER_HOME}/bin/jmeter -n \\
                     -t testplan0424.jmx \\
-                    -l ./results/results.jtl \\ //.${env.JTL_REPORT_FILE}
-                    -e -o ./results/report_output   //.${env.HTML_REPORT_DIR}
+                    -l ./results/results.jtl \\ 
+                    -e -o ./results/report_output   
                     """
+                    //.${env.JTL_REPORT_FILE}
+                    //.${env.HTML_REPORT_DIR}
                 }
             }
         }
