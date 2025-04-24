@@ -1,0 +1,36 @@
+#서비스 목록
+services:
+#이 이름으로 서비스를 만들겠다.
+  jenkins:
+    #이것들을 빌드해줄게
+    build:
+      #.을 찍은 이유는, 지금 이 파일을 기준으로 파일을 찾을게 라는 뜻
+      context: .
+      #도커에서 쓸 파일 이름이 Dockerfile이야
+      dockerfile: Dockerfile
+    #만들어질 컨테이너 이름 정하기. 여기선 sevice랑 이름 똑같게 만들었다
+    container_name: jenkins
+    #컨테이너가 종료되면 다시 켜줄지 말지 정하기
+    #no: 재시작하지 않음. 컨테이너가 중지되면 다시 시작되지 않으며, 수동으로 재실행해야 한다.
+    #on-failure: 컨테이너가 비정상 종료(에러 코드 반환)된 경우에만 재시작한다.
+    #always: 컨테이너가 중지될 경우 항상 재시작하며, 시스템 재부팅 시에도 자동으로 재시작된다.
+    #unless-stopped: 수동으로 중지되지 않은 경우 컨테이너를 항상 재시작하며, 시스템 재부팅 시에도 동일하게 동작한다.
+    restart: unless-stopped
+    #@@@@ : @@@@ 형식으로, 앞에있는 로컬호스트포트를 뒤에 포트로 연결
+    ports:
+      - "9000:8080"
+    #환경변수 설정
+    environment:
+      - JENKINS_OPTS="--httpPort=8080"
+    #컴퓨터에 저장된 공간을 연결
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - C:\Users\zz910\OneDrive\Desktop\apache-jmeter-5.6.3:/opt/jmeter
+    #사용자 권한 설정
+    user: root
+#volime에서 정한 공간을 여기서 정의
+volumes:
+  #도커에서 자동으로 저장공간 생성
+  jenkins_home:
