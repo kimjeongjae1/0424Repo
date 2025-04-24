@@ -27,7 +27,7 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
-      - C:\Users\zz910\OneDrive\Desktop\apache-jmeter-5.6.3:/opt/jmeter/apache-jmeter-5.6.3
+      - C:\Users\zz910\OneDrive\Desktop\apache-jmeter-5.6.3:/opt/jmeter
     #사용자 권한 설정
     user: root
 #volime에서 정한 공간을 여기서 정의
